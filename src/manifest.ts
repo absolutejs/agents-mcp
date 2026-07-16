@@ -9,10 +9,10 @@ export const manifest = defineManifest<Record<string, never>, never>()({
     accent: "#7c3aed",
     category: "ai",
     description:
-      "A read-only MCP server for finding and inspecting cryptographically verified agents in the public AbsoluteJS registry.",
+      "A read-only MCP server for finding verified agents and production agent-first packages in the public AbsoluteJS registry.",
     docsUrl: "https://github.com/absolutejs/agents-mcp",
     name: "@absolutejs/agents-mcp",
-    tagline: "Let every MCP client discover verified agents.",
+    tagline: "Let every MCP client discover verified agents and packages.",
   },
   settings: Type.Object({}),
   tools: {

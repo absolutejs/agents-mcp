@@ -2,6 +2,10 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { AgentRegistryClient, type RegistryClientOptions } from "./registry.js";
+import {
+  PackageRegistryClient,
+  type PackageRegistryClientOptions,
+} from "./packages.js";
 
 const json = (value: unknown) => ({
   content: [{ type: "text" as const, text: JSON.stringify(value, null, 2) }],
@@ -10,11 +14,15 @@ const json = (value: unknown) => ({
 
 export type AgentsMcpServerOptions = RegistryClientOptions & {
   client?: AgentRegistryClient;
+  packageClient?: PackageRegistryClient;
+  packageRegistry?: PackageRegistryClientOptions;
 };
 
 export const createAgentsMcpServer = (options: AgentsMcpServerOptions = {}) => {
   const client = options.client ?? new AgentRegistryClient(options);
-  const server = new McpServer({ name: "absolute-agents", version: "0.1.1" });
+  const packageClient =
+    options.packageClient ?? new PackageRegistryClient(options.packageRegistry);
+  const server = new McpServer({ name: "absolute-agents", version: "0.2.0" });
 
   server.registerTool(
     "search_agents",
@@ -26,13 +34,48 @@ export const createAgentsMcpServer = (options: AgentsMcpServerOptions = {}) => {
         query: z.string().max(500).optional().describe("Text found in agent metadata."),
         capability: z.string().max(200).optional().describe("Capability ID or fragment."),
         interfaceType: z
-          .enum(["a2a", "http", "mcp", "openapi", "websocket"])
+          .enum(["a2a", "arazzo", "http", "mcp", "openapi", "webmcp", "websocket"])
           .optional(),
         limit: z.number().int().min(1).max(100).default(20),
         offset: z.number().int().min(0).default(0),
       },
     },
     async (input) => json(await client.search(input)),
+  );
+
+  server.registerTool(
+    "search_packages",
+    {
+      annotations: { readOnlyHint: true, openWorldHint: true },
+      description:
+        "Search production AbsoluteJS packages by purpose, category, or supported agent standard.",
+      inputSchema: {
+        query: z.string().max(500).optional(),
+        category: z.string().max(100).optional(),
+        standard: z.string().max(200).optional(),
+        limit: z.number().int().min(1).max(100).default(20),
+        offset: z.number().int().min(0).default(0),
+      },
+    },
+    async (input) => json(await packageClient.search(input)),
+  );
+
+  server.registerTool(
+    "get_package",
+    {
+      annotations: { readOnlyHint: true, openWorldHint: true },
+      description: "Get one AbsoluteJS package by its exact scoped npm name.",
+      inputSchema: { name: z.string().startsWith("@absolutejs/").max(214) },
+    },
+    async ({ name }) => {
+      const entry = await packageClient.get(name);
+      return entry === undefined
+        ? {
+            content: [{ type: "text" as const, text: `No package found for ${name}` }],
+            isError: true,
+          }
+        : json(entry);
+    },
   );
 
   server.registerTool(
@@ -90,7 +133,26 @@ export const createAgentsMcpServer = (options: AgentsMcpServerOptions = {}) => {
     }),
   );
 
-  return { client, server };
+  server.registerResource(
+    "absolutejs-package-index",
+    "absolute-agents://packages/index",
+    {
+      description: "The current catalog of production agent-first AbsoluteJS packages.",
+      mimeType: "application/json",
+      title: "AbsoluteJS Package Catalog",
+    },
+    async (uri) => ({
+      contents: [
+        {
+          mimeType: "application/json",
+          text: JSON.stringify(await packageClient.load(), null, 2),
+          uri: uri.href,
+        },
+      ],
+    }),
+  );
+
+  return { client, packageClient, server };
 };
 
 export const serveAgentsMcpStdio = async (options: AgentsMcpServerOptions = {}) => {

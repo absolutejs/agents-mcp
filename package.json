@@ -1,7 +1,7 @@
 {
   "name": "@absolutejs/agents-mcp",
-  "version": "0.1.1",
-  "description": "Search and inspect verified agents in the signed AbsoluteJS public agent registry from any MCP client.",
+  "version": "0.2.0",
+  "description": "Search verified agents and production agent-first AbsoluteJS packages from any MCP client.",
   "mcpName": "io.github.absolutejs/agents",
   "type": "module",
   "license": "MIT",
