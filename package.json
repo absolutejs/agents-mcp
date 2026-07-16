@@ -1,6 +1,6 @@
 {
   "name": "@absolutejs/agents-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Search and inspect verified agents in the signed AbsoluteJS public agent registry from any MCP client.",
   "mcpName": "io.github.absolutejs/agents",
   "type": "module",
@@ -15,7 +15,7 @@
     "url": "https://github.com/absolutejs/agents-mcp/issues"
   },
   "bin": {
-    "absolute-agents-mcp": "./dist/cli.js"
+    "absolute-agents-mcp": "dist/cli.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

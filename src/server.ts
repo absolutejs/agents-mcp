@@ -14,7 +14,7 @@ export type AgentsMcpServerOptions = RegistryClientOptions & {
 
 export const createAgentsMcpServer = (options: AgentsMcpServerOptions = {}) => {
   const client = options.client ?? new AgentRegistryClient(options);
-  const server = new McpServer({ name: "absolute-agents", version: "0.1.0" });
+  const server = new McpServer({ name: "absolute-agents", version: "0.1.1" });
 
   server.registerTool(
     "search_agents",
