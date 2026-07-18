@@ -1,6 +1,6 @@
 {
   "name": "@absolutejs/agents-mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Search verified agents and production agent-first AbsoluteJS packages from any MCP client.",
   "mcpName": "io.github.absolutejs/agents",
   "type": "module",

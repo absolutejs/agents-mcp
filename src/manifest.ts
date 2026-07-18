@@ -5,6 +5,16 @@ const tool = toolFactory<never>();
 
 export const manifest = defineManifest<Record<string, never>, never>()({
   contract: 2,
+  discovery: {
+    audiences: ["ai-clients", "agent-developers"],
+    intents: [
+      "search verified agents",
+      "find AbsoluteJS packages",
+      "inspect the agent registry",
+    ],
+    keywords: ["agents", "registry", "search", "mcp", "packages", "discovery"],
+    protocols: ["MCP 2025-11-25"],
+  },
   identity: {
     accent: "#7c3aed",
     category: "ai",
@@ -19,10 +29,14 @@ export const manifest = defineManifest<Record<string, never>, never>()({
     configure_agents_mcp: tool.workspace({
       annotations: { readOnlyHint: true },
       capabilities: ["read"],
-      description: "Return the install-and-run configuration for the AbsoluteJS agent registry MCP server.",
+      description:
+        "Return the install-and-run configuration for the AbsoluteJS agent registry MCP server.",
       input: Type.Object({}),
       handler: async () =>
-        JSON.stringify({ command: "npx", args: ["-y", "@absolutejs/agents-mcp"] }),
+        JSON.stringify({
+          command: "npx",
+          args: ["-y", "@absolutejs/agents-mcp"],
+        }),
     }),
   },
   wiring: [
@@ -31,7 +45,9 @@ export const manifest = defineManifest<Record<string, never>, never>()({
       id: "stdio",
       server: {
         code: "await serveAgentsMcpStdio()",
-        imports: [{ from: "@absolutejs/agents-mcp", names: ["serveAgentsMcpStdio"] }],
+        imports: [
+          { from: "@absolutejs/agents-mcp", names: ["serveAgentsMcpStdio"] },
+        ],
         placement: "module-scope",
       },
       title: "Agent registry MCP server",
