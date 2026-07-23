@@ -28,6 +28,11 @@ export const manifest = defineManifest<Record<string, never>, never>()({
   tools: {
     configure_agents_mcp: tool.workspace({
       annotations: { readOnlyHint: true },
+      authorization: {
+        approval: "never",
+        audience: "public",
+        effects: ["read"],
+      },
       capabilities: ["read"],
       description:
         "Return the install-and-run configuration for the AbsoluteJS agent registry MCP server.",
