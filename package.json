@@ -48,7 +48,8 @@
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "check:package": "bun run typecheck && bun run test && bun run build && bun scripts/check-package.ts && absolute-changelog check",
-    "release": "bun run check:package && npm publish --access public"
+    "release": "bun run check:package && npm publish --access public",
+    "prepublishOnly": "absolute-changelog check"
   },
   "dependencies": {
     "@absolutejs/manifest": "^0.9.0",
@@ -57,7 +58,7 @@
     "zod": "^3.25.0"
   },
   "devDependencies": {
-    "@absolutejs/changelog": "^0.1.2",
+    "@absolutejs/changelog": "^0.2.0",
     "@types/bun": "^1.3.14",
     "@types/node": "^24.0.0",
     "typescript": "^5.9.0"
